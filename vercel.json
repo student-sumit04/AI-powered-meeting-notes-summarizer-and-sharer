@@ -6,15 +6,10 @@
     {
       "source": "/api/(.*)",
       "destination": "https://ai-powered-meeting-notes-summarizer-and-aflg.onrender.com/api/$1"
-    }
-  ],
-  "routes": [
-    { 
-      "handle": "filesystem" 
     },
-    { 
-      "src": "/(.*)", 
-      "dest": "/index.html" 
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 } 
