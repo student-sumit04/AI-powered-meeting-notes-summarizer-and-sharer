@@ -1,5 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
+// Configure axios to use the API URL from environment variables
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || ''
+});
 
 interface SummaryData {
   summary: string;
@@ -17,6 +22,11 @@ function App() {
   const [emailSubject, setEmailSubject] = useState('Meeting Summary');
   const [isSharing, setIsSharing] = useState(false);
   const [shareMessage, setShareMessage] = useState('');
+  
+  // Log API URL on startup for debugging
+  useEffect(() => {
+    console.log('API URL:', import.meta.env.VITE_API_URL || 'Not defined');
+  }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -35,7 +45,7 @@ function App() {
       formData.append('file', file);
       
       setIsLoading(true);
-      axios.post('/api/upload', formData)
+      api.post('/api/upload', formData)
         .then(response => {
           setTranscript(response.data.transcript);
           setError('');
@@ -62,7 +72,7 @@ function App() {
     setError('');
 
     try {
-      const response = await axios.post('/api/summarize', {
+      const response = await api.post('/api/summarize', {
         transcript,
         customPrompt: customPrompt || undefined
       });
@@ -104,7 +114,7 @@ function App() {
     try {
       const emailList = recipients.split(',').map(email => email.trim()).filter(email => email);
       
-      await axios.post('/api/share', {
+      await api.post('/api/share', {
         summary: summaryData.summary,
         recipients: emailList,
         subject: emailSubject
