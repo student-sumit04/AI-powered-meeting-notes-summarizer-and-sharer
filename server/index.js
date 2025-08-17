@@ -6,6 +6,19 @@ require('dotenv').config();
 // Import configurations
 const { PORT, NODE_ENV } = require('./config/constants');
 
+// CORS configuration
+const corsOptions = {
+  origin: NODE_ENV === 'development' 
+    ? '*' 
+    : [
+        'https://ai-powered-meeting-notes-su-git-94520a-sumits-projects-6928961d.vercel.app',
+        'https://ai-powered-meeting-notes-summarizer-and-sharer.vercel.app',
+        'https://ai-meeting-summarizer.vercel.app', // Add any additional domains here
+        'http://localhost:3000'
+      ],
+  credentials: true
+};
+
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
 
@@ -19,9 +32,18 @@ const { testEmailConfig } = require('./utils/emailService');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Security headers
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', corsOptions.origin === '*' ? '*' : req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 // Request logging middleware
 app.use((req, res, next) => {
