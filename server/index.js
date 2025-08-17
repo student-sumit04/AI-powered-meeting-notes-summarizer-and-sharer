@@ -67,6 +67,22 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Root endpoint - API info
+app.get('/', (req, res) => {
+  res.json({ 
+    name: 'AI Meeting Summarizer API',
+    description: 'Backend API for the AI Meeting Summarizer application',
+    endpoints: [
+      { path: '/api/summarize', method: 'POST', description: 'Generate AI summary from transcript' },
+      { path: '/api/upload', method: 'POST', description: 'Upload transcript file (txt/pdf)' },
+      { path: '/api/share', method: 'POST', description: 'Share summary via email' },
+      { path: '/health', method: 'GET', description: 'Health check endpoint' }
+    ],
+    version: '1.0.0',
+    status: 'online'
+  });
+});
+
 // Serve static files in production
 if (NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/dist')));
