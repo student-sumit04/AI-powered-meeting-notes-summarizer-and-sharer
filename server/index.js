@@ -104,8 +104,9 @@ app.use('*', (req, res) => {
 const startServer = async () => {
   try {
     // Test email configuration on startup
+    let emailConfigValid = false;
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-      const emailConfigValid = await testEmailConfig();
+      emailConfigValid = await testEmailConfig();
       if (!emailConfigValid) {
         logError('Email configuration is invalid. Email sharing may not work properly.');
       }
@@ -117,7 +118,7 @@ const startServer = async () => {
         port: PORT
       });
       console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📧 Email sharing: ${process.env.EMAIL_USER ? 'Configured' : 'Not configured'}`);
+      console.log(`📧 Email sharing: ${emailConfigValid ? 'Configured' : 'Not configured'}`);
       console.log(`🤖 AI API: ${process.env.GROQ_API_KEY ? 'Configured' : 'Not configured'}`);
     });
   } catch (error) {
