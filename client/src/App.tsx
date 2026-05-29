@@ -45,12 +45,23 @@ function App() {
       formData.append('file', file);
       
       setIsLoading(true);
-      api.post('/api/upload', formData)
+      api.post('/api/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 30000
+      })
         .then(response => {
           setTranscript(response.data.transcript);
           setError('');
         })
         .catch(err => {
+          if (err.code === 'ECONNABORTED') {
+            setError('Upload timed out. Please try a smaller or text-based PDF.');
+            return;
+          }
+          if (!err.response) {
+            setError('No response from server. Check if the API is running and CORS is configured.');
+            return;
+          }
           setError(err.response?.data?.error || 'Failed to process PDF file');
         })
         .finally(() => {

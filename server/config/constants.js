@@ -15,9 +15,10 @@ const MAX_TRANSCRIPT_LENGTH = 50000; // 50,000 characters
 const EMAIL_SERVICE = 'gmail';
 
 // AI Model Configuration
-const AI_MODEL = 'llama3-8b-8192';
+const AI_MODEL = 'llama-3.1-8b-instant';
 const AI_TEMPERATURE = 0.3;
 const AI_MAX_TOKENS = 2000;
+const GROQ_REQUEST_TOKEN_LIMIT = 6000;
 
 module.exports = {
   GROQ_API_KEY,
@@ -30,5 +31,6 @@ module.exports = {
   EMAIL_SERVICE,
   AI_MODEL,
   AI_TEMPERATURE,
-  AI_MAX_TOKENS
+  AI_MAX_TOKENS,
+  GROQ_REQUEST_TOKEN_LIMIT
 }; 
