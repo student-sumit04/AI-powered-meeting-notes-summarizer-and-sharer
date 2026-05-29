@@ -1,3 +1,5 @@
+const { MAX_TRANSCRIPT_LENGTH } = require('../config/constants');
+
 const validateSummarizeRequest = (req, res, next) => {
   const { transcript, customPrompt } = req.body;
 
@@ -5,8 +7,8 @@ const validateSummarizeRequest = (req, res, next) => {
     return res.status(400).json({ error: 'Transcript is required' });
   }
 
-  if (transcript.length > 50000) {
-    return res.status(400).json({ error: 'Transcript is too long. Maximum 50,000 characters.' });
+  if (transcript.length > MAX_TRANSCRIPT_LENGTH) {
+    return res.status(400).json({ error: 'Transcript is too long. Please shorten it to about 50,000 characters.' });
   }
 
   next();

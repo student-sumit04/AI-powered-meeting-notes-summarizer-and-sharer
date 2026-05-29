@@ -4,7 +4,8 @@ const {
   GROQ_API_URL,
   AI_MODEL,
   AI_TEMPERATURE,
-  AI_MAX_TOKENS
+  AI_MAX_TOKENS,
+  GROQ_REQUEST_TOKEN_LIMIT
 } = require('../config/constants');
 
 const MODEL_CONTEXT_LIMITS = {
@@ -32,15 +33,16 @@ Formatting: Use Markdown with headings, bullet points, and **bold** highlights f
     const userMessage = `${prompt}\n\nTranscript:\n${transcript}`;
 
     const contextLimit = MODEL_CONTEXT_LIMITS[AI_MODEL] || 8192;
+    const requestLimit = Math.min(contextLimit, GROQ_REQUEST_TOKEN_LIMIT);
     const safetyBuffer = 200;
     const inputTokens = estimateTokens(`${systemMessage}\n${userMessage}`);
-    let maxTokens = Math.min(AI_MAX_TOKENS, Math.max(256, contextLimit - inputTokens - safetyBuffer));
+    let maxTokens = Math.min(AI_MAX_TOKENS, Math.max(256, requestLimit - inputTokens - safetyBuffer));
 
     let finalUserMessage = userMessage;
     if (maxTokens <= 0) {
       const minResponseTokens = 256;
       const promptTokens = estimateTokens(`${systemMessage}\n${prompt}\n\nTranscript:\n`);
-      const availableTranscriptTokens = contextLimit - safetyBuffer - promptTokens - minResponseTokens;
+      const availableTranscriptTokens = requestLimit - safetyBuffer - promptTokens - minResponseTokens;
 
       if (availableTranscriptTokens <= 0) {
         return res.status(400).json({ error: 'Transcript is too long for the selected model. Please shorten it and try again.' });
